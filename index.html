@@ -1,60 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <img src="logo.png" alt="Frecuencia Santa Laura" class="logo">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Frecuencia Santa Laura - Dale Play a tu Recreo</title>
-  <link rel="stylesheet" href="style.css".logo {
-  max-width: 200px;
-  margin: 0 auto 1rem;
-  display: block;
-} /> 
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      color: #333333;
+      line-height: 1.6;
+    }
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    header {
+      background-color: #00c8c8;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 2.2rem;
+    }
+    .player-section {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    #now-playing {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #00c8c8;
+      font-size: 1.1rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: 2rem;
+      border-top: 1px solid #eee;
+      color: #666;
+    }
+    .stream-info {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="container">
       <h1>Frecuencia Santa Laura</h1>
-      <p class="slogan">¡Dale Play a tu Recreo!</p>
+      <p>¡Dale Play a tu Recreo!</p>
     </div>
   </header>
 
   <main class="container">
-    <div class="player-container">
-  <h2>Escucha en Vivo</h2>
-  <audio controls>
-    <!-- Intenta primero con el stream directo -->
-    <source src="http://s26.myradiostream.com:22812/" type="audio/mpeg">
-    <!-- Alternativa con lista de reproducción -->
-    <source src="http://s26.myradiostream.com:22812/listen.m3u" type="audio/x-mpegurl">
-    Tu navegador no soporta el reproductor de audio.
-  </audio>
-  <p style="margin-top: 0.6rem; font-size: 0.9rem; color: #666;">
-    ¿No escuchas? <a href="http://s26.myradiostream.com:22812/" target="_blank">Abrir en reproductor externo</a>.
-  </p>
-</div>
+    <div class="player-section">
+      <h2>Escucha en Vivo</h2>
+      <audio controls style="width: 100%; max-width: 500px;">
+        <source src="http://s26.myradiostream.com:22812/" type="audio/mpeg">
+        Tu navegador no soporta audio.
+      </audio>
 
-    <div class="info">
-      <p>Escucha en vivo la radio escolar de la Academia Santa Laura.</p>
-      <p>Transmitimos en recreos y eventos especiales.</p>
-    </div>
+      <div id="now-playing">Cargando...</div>
+      <div id="listeners" class="stream-info">Oyentes: —</div>
+      <div id="status" class="stream-info">—</div>
 
-    <!-- 🔽 Aquí va tu contador de visitas -->
-    <!-- Ejemplo con Hitwebcounter (reemplaza con tu código real) -->
-    <div class="counter">
-      <a href="https://www.hitwebcounter.com" target="_blank">
-        <img src="https://hitwebcounter.com/counter/counter.php?page=XXXXXXXXX&style=0006&nbdigits=5&type=page&initCount=0" 
-             title="Total Visitas" Alt="Visitantes" border="0">
-      </a>
+      <p style="margin-top: 1rem; font-size: 0.9rem;">
+        ¿No escuchas? <a href="http://s26.myradiostream.com:22812/" target="_blank">Abrir en reproductor externo</a>.
+      </p>
     </div>
   </main>
 
   <footer>
     <div class="container">
-      <p>&copy; 2025 Frecuencia Santa Laura | Academia Santa Laura</p>
-      <p><a href="https://sites.google.com/acadsantalaura.cl/frecuenciasantalaura">Sitio institucional</a></p>
+      &copy; 2025 Frecuencia Santa Laura | Academia Santa Laura
     </div>
   </footer>
+
+  <!-- Script para título, oyentes y estado -->
+  <script>
+    const metadataUrl = 'http://s26.myradiostream.com:22812/7.html';
+    const proxy = 'https://corsproxy.io/?';
+    const nowPlayingEl = document.getElementById('now-playing');
+    const listenersEl = document.getElementById('listeners');
+    const statusEl = document.getElementById('status');
+
+    async function updateStreamInfo() {
+      try {
+        const response = await fetch(proxy + encodeURIComponent(metadataUrl));
+        if (!response.ok) throw new Error('Sin conexión con el servidor');
+        
+        const text = await response.text();
+        const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "").trim();
+
+        if (!cleanText) {
+          nowPlayingEl.textContent = "Transmisión no disponible";
+          listenersEl.textContent = "Oyentes: —";
+          statusEl.innerHTML = '<span style="color:#d32f2f;">●</span> Sin conexión (servidor caído)';
+          return;
+        }
+
+        const parts = cleanText.split(',');
+        const listeners = parseInt(parts[0]) || 0;
+        listenersEl.textContent = `Oyentes: ${listeners}`;
+
+        const sourceActive = parts[1] === "1";
+        if (sourceActive) {
+          statusEl.innerHTML = '<span style="color:#388e3c;">●</span> En línea';
+        } else {
+          statusEl.innerHTML = '<span style="color:#f57c00;">●</span> Offline (sin fuente)';
+        }
+
+        if (parts.length >= 7) {
+          let title = parts.slice(6).join(',').trim();
+          title = title.replace(/<\/?[^>]+(>|$)/g, "").trim();
+          nowPlayingEl.textContent = title ? "Ahora suena: " + title : "Ahora suena: Música de Frecuencia Santa Laura";
+        } else {
+          nowPlayingEl.textContent = "Ahora suena: Música de Frecuencia Santa Laura";
+        }
+
+      } catch (err) {
+        console.error("Error al obtener datos del stream:", err);
+        nowPlayingEl.textContent = "Transmisión no disponible";
+        listenersEl.textContent = "Oyentes: —";
+        statusEl.innerHTML = '<span style="color:#d32f2f;">●</span> Sin conexión (servidor caído)';
+      }
+    }
+
+    updateStreamInfo();
+    setInterval(updateStreamInfo, 15000);
+  </script>
 </body>
 </html>
