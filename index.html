@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <img src="logo.png" alt="Frecuencia Santa Laura" class="logo">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Frecuencia Santa Laura - Dale Play a tu Recreo</title>
+  <link rel="stylesheet" href="style.css".logo {
+  max-width: 200px;
+  margin: 0 auto 1rem;
+  display: block;
+} /> 
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Frecuencia Santa Laura</h1>
+      <p class="slogan">¡Dale Play a tu Recreo!</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="player-container">
+  <h2>Escucha en Vivo</h2>
+  <audio controls>
+    <!-- Intenta primero con el stream directo -->
+    <source src="http://s26.myradiostream.com:22812/" type="audio/mpeg">
+    <!-- Alternativa con lista de reproducción -->
+    <source src="http://s26.myradiostream.com:22812/listen.m3u" type="audio/x-mpegurl">
+    Tu navegador no soporta el reproductor de audio.
+  </audio>
+  <p style="margin-top: 0.6rem; font-size: 0.9rem; color: #666;">
+    ¿No escuchas? <a href="http://s26.myradiostream.com:22812/" target="_blank">Abrir en reproductor externo</a>.
+  </p>
+</div>
+
+    <div class="info">
+      <p>Escucha en vivo la radio escolar de la Academia Santa Laura.</p>
+      <p>Transmitimos en recreos y eventos especiales.</p>
+    </div>
+
+    <!-- 🔽 Aquí va tu contador de visitas -->
+    <!-- Ejemplo con Hitwebcounter (reemplaza con tu código real) -->
+    <div class="counter">
+      <a href="https://www.hitwebcounter.com" target="_blank">
+        <img src="https://hitwebcounter.com/counter/counter.php?page=XXXXXXXXX&style=0006&nbdigits=5&type=page&initCount=0" 
+             title="Total Visitas" Alt="Visitantes" border="0">
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Frecuencia Santa Laura | Academia Santa Laura</p>
+      <p><a href="https://sites.google.com/acadsantalaura.cl/frecuenciasantalaura">Sitio institucional</a></p>
+    </div>
+  </footer>
+</body>
+</html>
